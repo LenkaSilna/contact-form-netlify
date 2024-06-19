@@ -16,6 +16,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
   const [submitted, setSubmitted] = useState(false);
   const navigate = useNavigate();
   const { executeRecaptcha } = useGoogleReCaptcha();
+  const [error, setError] = useState('');
 
   useEffect(() => {
     if (!executeRecaptcha) {
@@ -57,7 +58,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
       setSubmitted(true);
       navigate('/thank-you');
     } else {
-      alert("reCAPTCHA verification failed. Please try again.");
+      setError("reCAPTCHA verification failed. Please try again.");
     }
   };
 
@@ -103,6 +104,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
             onChange={handleChange}
             required
           ></textarea>
+          {error && <p>{error}</p>}
         </div>
         {/* Honeypot field */}
         <div style={{ display: 'none' }}>
