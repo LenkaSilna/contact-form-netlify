@@ -1,7 +1,6 @@
-// src/ContactForm.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ReCAPTCHA from 'react-google-recaptcha';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import Head from './Head';
 
 type ContactFormProps = {
@@ -14,27 +13,52 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
     email: '',
     message: ''
   });
-  const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const navigate = useNavigate();
+  const { executeRecaptcha } = useGoogleReCaptcha();
+
+  useEffect(() => {
+    if (!executeRecaptcha) {
+      console.error('Execute recaptcha not yet available');
+    }
+  }, [executeRecaptcha]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleRecaptchaChange = (value: string | null) => {
-    setRecaptchaValue(value);
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!executeRecaptcha) {
+      console.error('Execute recaptcha not yet available');
+      return;
+    }
+
+    const token = await executeRecaptcha('contact_form');
+
+    const response = await fetch('/.netlify/functions/verify-recaptcha', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ token })
+    });
+
+    const data = await response.json();
+
+    if (data.message === 'reCAPTCHA verification successful') {
+      if (onSubmit) {
+        onSubmit(formData);
+      }
+      setSubmitted(true);
+      navigate('/thank-you');
+    } else {
+      alert("reCAPTCHA verification failed. Please try again.");
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (onSubmit) {
-      onSubmit(formData);
-    }
-    setSubmitted(true);
-    navigate('/thank-you');
-  };
 
   return (
     <div>
@@ -77,7 +101,6 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
             value={formData.message}
             onChange={handleChange}
             required
-            rows={4}
           ></textarea>
         </div>
         {/* Honeypot field */}
@@ -88,13 +111,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
           </label>
         </div>
         <div>
-          <ReCAPTCHA
-            sitekey="6Ld-jvwpAAAAAHv07TmqLm21eHfBEo_OON-9NyXb"
-            onChange={handleRecaptchaChange}
-          />
-        </div>
-        <div>
-          <button type="submit" disabled={!recaptchaValue}>Submit</button>
+          <button type="submit">Submit</button>
         </div>
       </form>
     </div>
