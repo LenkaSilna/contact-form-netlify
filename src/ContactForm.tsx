@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
+import { GoogleReCaptchaProvider, useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import Head from './Head';
 
 type ContactFormProps = {
@@ -58,7 +58,6 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
       alert("reCAPTCHA verification failed. Please try again.");
     }
   };
-
 
   return (
     <div>
@@ -118,4 +117,10 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
   );
 };
 
-export default ContactForm;
+const ContactFormWithProvider: React.FC<ContactFormProps> = (props) => (
+  <GoogleReCaptchaProvider reCaptchaKey="6Ld-jvwpAAAAAHv07TmqLm21eHfBEo_OON-9NyXb">
+    <ContactForm {...props} />
+  </GoogleReCaptchaProvider>
+);
+
+export default ContactFormWithProvider;
