@@ -89,7 +89,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
         </div>
         <div>
           <ReCAPTCHA
-            sitekey="your-site-key"
+            sitekey="6Ld-jvwpAAAAAHv07TmqLm21eHfBEo_OON-9NyXb"
             onChange={handleRecaptchaChange}
           />
         </div>
