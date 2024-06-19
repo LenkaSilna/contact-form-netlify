@@ -1,0 +1,24 @@
+[build]
+  publish = "dist"
+  command = "npm run build"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[plugins]]
+  package = "@netlify/plugin-submit-server"
+  inputs = { "path" = "path/to/your/submit/api" }
+
+[[notifications]]
+  form = "contact"
+  to = "lenka.baricova@post.cz"
+  subject = "New contact form submission"
+  body = """
+  You have received a new submission from your contact form.
+
+  Name: {{name}}
+  Email: {{email}}
+  Message: {{message}}
+  """
