@@ -30,14 +30,14 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+  
     if (!executeRecaptcha) {
       console.error('Execute recaptcha not yet available');
       return;
     }
-
+  
     const token = await executeRecaptcha('contact_form');
-
+  
     const response = await fetch('/.netlify/functions/verify-recaptcha', {
       method: 'POST',
       headers: {
@@ -45,9 +45,11 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
       },
       body: JSON.stringify({ token })
     });
-
+  
     const data = await response.json();
-
+  
+    console.log('reCAPTCHA verification response:', data);
+  
     if (data.message === 'reCAPTCHA verification successful') {
       if (onSubmit) {
         onSubmit(formData);
