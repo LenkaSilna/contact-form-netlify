@@ -21,6 +21,7 @@ form {
 
 input,
 textarea {
+  font-family: inherit;
   margin-top: 5px;
   padding: 10px;
   font-size: 16px;
