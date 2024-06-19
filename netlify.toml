@@ -7,8 +7,6 @@
   to = "/index.html"
   status = 200
 
-[[plugins]]
-
 [[notifications]]
   form = "contact"
   to = "lenka.baricova@post.cz"
