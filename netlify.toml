@@ -8,7 +8,6 @@
   status = 200
 
 [[plugins]]
-  inputs = { "path" = "path/to/your/submit/api" }
 
 [[notifications]]
   form = "contact"
